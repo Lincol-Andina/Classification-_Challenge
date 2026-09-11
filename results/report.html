@@ -1,0 +1,16 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Classification Challenge - Gas Drift</title>
+<style>body{font-family:Arial,Helvetica,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;background:#f7f7f8;color:#222}h1{font-size:26px}h2{margin-top:32px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}img{width:100%;border:1px solid #ddd;border-radius:8px;background:#fff}table{border-collapse:collapse;width:100%;background:#fff}th,td{border:1px solid #ddd;padding:8px;font-size:14px}th{background:#eee}.card{background:#fff;border:1px solid #e2e2e2;border-radius:10px;padding:16px}</style></head><body>
+<h1>Classification Challenge — KNN / GaussianNB / LDA / AdaBoost</h1>
+<p><b>Dataset:</b> Gas Sensor Array Drift (UCI 270) — 13,910 x 128, 6 gases. Pipeline unificado: mismo split 80/20, mismo StandardScaler, mismo GridSearchCV 5-Fold (f1_macro).</p>
+<div class="card"><h2>Metrics</h2>
+<table><tr><th>Modelo</th><th>CV F1-macro</th><th>Test acc</th><th>Test F1-macro</th><th>Fit (s)</th></tr>
+<tr><td>KNN (manhattan,k=3)</td><td>0.995</td><td>0.995</td><td>0.995</td><td>6.3</td></tr>
+<tr><td>LDA (lsqr)</td><td>0.945</td><td>0.951</td><td>0.948</td><td>0.4</td></tr>
+<tr><td>AdaBoost (200,d=2)</td><td>0.914</td><td>0.908</td><td>0.898</td><td>125.2</td></tr>
+<tr><td>GaussianNB</td><td>0.568</td><td>0.578</td><td>0.579</td><td>0.3</td></tr></table>
+<p><b>Verdict:</b> Mejor equilibrio KNN. AdaBoost no justifica coste. LDA mejor costo/rendimiento. NB falla por independencia.</p></div>
+<h2>Benchmark</h2><div class="grid"><div><h3>F1 por modelo</h3><img src="../figures/f1_bar.png"></div><div><h3>Costo vs F1</h3><img src="../figures/cost_vs_f1.png"></div></div>
+<h2>Confusion matrices</h2><div class="grid"><div><h3>KNN</h3><img src="../figures/cm_KNN.png"></div><div><h3>LDA</h3><img src="../figures/cm_LDA.png"></div><div><h3>AdaBoost</h3><img src="../figures/cm_AdaBoost.png"></div><div><h3>GaussianNB</h3><img src="../figures/cm_GaussianNB.png"></div></div>
+<h2>Fronteras (PCA-2D, solo visualización)</h2><div class="grid"><div><h3>KNN</h3><img src="../figures/boundary_KNN.png"></div><div><h3>LDA</h3><img src="../figures/boundary_LDA.png"></div><div><h3>AdaBoost</h3><img src="../figures/boundary_AdaBoost.png"></div><div><h3>GaussianNB</h3><img src="../figures/boundary_GaussianNB.png"></div></div>
+</body></html>
