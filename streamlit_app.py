@@ -9,6 +9,7 @@ BASE = Path(__file__).parent
 RES = BASE / "results"
 FIG = BASE / "figures"
 DATA = BASE / "data" / "gas_drift.csv"
+DICT = BASE / "data" / "feature_dictionary.csv"
 
 CLASS_NAMES = {1: "Ethanol", 2: "Ethylene", 3: "Ammonia",
                4: "Acetaldehyde", 5: "Acetone", 6: "Toluene"}
@@ -126,16 +127,33 @@ with tab5:
 
 with tab6:
     st.subheader("Muestra del dataset (solo lectura, head)")
+    st.caption("Nombres limpiados: `f1..f128` → `Sensor01_R1..Sensor16_R8` "
+               "(16 sensores × 8 lecturas, sin semántica oficial en el dataset — "
+               "las 128 features son mediciones anónimas de sensores. "
+               "Ver `data/feature_dictionary.csv` para el mapeo completo).")
     if DATA.exists():
         try:
             head = pd.read_csv(DATA, nrows=10)
             st.dataframe(head.iloc[:, :8].join(head[["class"]]), use_container_width=True)
-            st.caption(f"`gas_drift.csv`: 13,910 filas × 129 cols (128 sensores + class). Vista: 10 filas × 8 primeras features.")
+            st.caption(f"`gas_drift.csv`: 13,910 filas × 129 cols "
+                       f"(128 sensores + class). Vista: 10 filas × 8 primeras features.")
         except Exception as e:
             st.warning(f"No se pudo leer muestra: {e}")
     else:
         st.warning("`data/gas_drift.csv` no incluido en el deploy (esperable en Cloud para ahorrar peso). "
-                   "Generable local con `python src/download_data.py`.")
+                   "Generable local con `python src/download_data.py` + `python src/clean_data.py`.")
+    if DICT.exists():
+        try:
+            dict_df = pd.read_csv(DICT)
+            st.caption(f"**Diccionario de features** ({len(dict_df)} entradas):")
+            st.dataframe(dict_df.head(12), use_container_width=True)
+            st.download_button("Descargar feature_dictionary.csv (129 filas)",
+                               dict_df.to_csv(index=False).encode(),
+                               "feature_dictionary.csv", "text/csv")
+        except Exception as e:
+            st.warning(f"No se pudo leer el diccionario: {e}")
+    else:
+        st.warning("`data/feature_dictionary.csv` no incluido. Generable con `python src/clean_data.py`.")
 
 st.divider()
 st.caption("Vergara et al. 2012 (Gas Sensor Array Drift); UCI ML Repository id=270, CC-BY-4.0, solo investigación. "

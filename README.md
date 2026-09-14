@@ -10,8 +10,20 @@
 ```
 pip install ucimlrepo pandas scikit-learn matplotlib seaborn
 python src/download_data.py   # parsea batch*.dat -> data/gas_drift.csv (ya hecho)
+python src/clean_data.py      # renombra columnas f1..f128 -> Sensor01_R1..Sensor16_R8 (ya hecho)
 python src/experiment.py      # pipeline unificado + GridSearch + CV + figuras
 ```
+
+## Limpieza de datos (nombres legibles)
+El dataset crudo (UCI id=270) trae columnas anónimas `f1..f128` — mediciones de 16 sensores químicos sin
+encabezados oficiales. Para que cualquier persona entienda el dataset, `src/clean_data.py` los renombra:
+
+- `f(i)` → `Sensor{(i-1)//8+1:02d}_R{(i-1)%8+1}`  →  **16 sensores × 8 lecturas**
+- Ejemplos: `f1..f8 → Sensor01_R1..Sensor01_R8`, `f121..f128 → Sensor16_R1..Sensor16_R8`
+- La columna `class` se conserva (Clase de gas 1..6).
+
+Solo cambia la cabecera; valores y orden no se tocan. El pipeline (`experiment.py`) lee por posición, así que
+los resultados no varían. El mapeo completo queda en `data/feature_dictionary.csv`. Usa solo estándar-library.
 
 ## Unified Pipeline (igualdad total)
 1. Mismo CSV, mismo `train_test_split(80/20, stratify, random_state=42)`.
